@@ -1,1 +1,1 @@
-export { getAvailableEditors } from './editors/index';
+export { getAvailableEditors, launchExternalEditor as launchEditor } from './editors/index';
