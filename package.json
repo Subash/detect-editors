@@ -1,6 +1,6 @@
 {
   "name": "detect-editors",
-  "version": "0.0.4",
+  "version": "0.0.5",
   "description": "Detect code editors installed on a system",
   "main": "lib/index.js",
   "scripts": {
