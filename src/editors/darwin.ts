@@ -2,6 +2,8 @@ import * as Path from 'path'
 import { pathExists } from 'fs-extra'
 import { IFoundEditor } from './found-editor'
 import { assertNever } from '../fatal-error'
+import appPath from 'app-path'
+import { parseEnumValue } from '../enum'
 import log from '../log'
 
 export enum ExternalEditor {
@@ -26,81 +28,12 @@ export enum ExternalEditor {
   GoLand = 'GoLand',
   AndroidStudio = 'Android Studio',
   Rider = 'Rider',
+  Nova = 'Nova',
 }
 
 export function parse(label: string): ExternalEditor | null {
-  if (label === ExternalEditor.Atom) {
-    return ExternalEditor.Atom
-  }
-  if (label === ExternalEditor.MacVim) {
-    return ExternalEditor.MacVim
-  }
-  if (label === ExternalEditor.VSCode) {
-    return ExternalEditor.VSCode
-  }
-  if (label === ExternalEditor.VSCodeInsiders) {
-    return ExternalEditor.VSCodeInsiders
-  }
-
-  if (label === ExternalEditor.VSCodium) {
-    return ExternalEditor.VSCodium
-  }
-
-  if (label === ExternalEditor.SublimeText) {
-    return ExternalEditor.SublimeText
-  }
-  if (label === ExternalEditor.BBEdit) {
-    return ExternalEditor.BBEdit
-  }
-  if (label === ExternalEditor.PhpStorm) {
-    return ExternalEditor.PhpStorm
-  }
-  if (label === ExternalEditor.PyCharm) {
-    return ExternalEditor.PyCharm
-  }
-  if (label === ExternalEditor.RubyMine) {
-    return ExternalEditor.RubyMine
-  }
-  if (label === ExternalEditor.TextMate) {
-    return ExternalEditor.TextMate
-  }
-  if (label === ExternalEditor.Brackets) {
-    return ExternalEditor.Brackets
-  }
-  if (label === ExternalEditor.WebStorm) {
-    return ExternalEditor.WebStorm
-  }
-  if (label === ExternalEditor.Typora) {
-    return ExternalEditor.Typora
-  }
-  if (label === ExternalEditor.CodeRunner) {
-    return ExternalEditor.CodeRunner
-  }
-  if (label === ExternalEditor.SlickEdit) {
-    return ExternalEditor.SlickEdit
-  }
-  if (label === ExternalEditor.IntelliJ) {
-    return ExternalEditor.IntelliJ
-  }
-  if (label === ExternalEditor.Xcode) {
-    return ExternalEditor.Xcode
-  }
-  if (label === ExternalEditor.GoLand) {
-    return ExternalEditor.GoLand
-  }
-  if (label === ExternalEditor.AndroidStudio) {
-    return ExternalEditor.AndroidStudio
-  }
-  if (label === ExternalEditor.Rider) {
-    return ExternalEditor.Rider
-  }
-  return null
+  return parseEnumValue(ExternalEditor, label) ?? null
 }
-
-/**
- * appPath will raise an error if it cannot find the program.
- */
-const appPath: (bundleId: string) => Promise<string> = require('app-path')
 
 function getBundleIdentifiers(editor: ExternalEditor): ReadonlyArray<string> {
   switch (editor) {
@@ -115,7 +48,7 @@ function getBundleIdentifiers(editor: ExternalEditor): ReadonlyArray<string> {
     case ExternalEditor.VSCodium:
       return ['com.visualstudio.code.oss']
     case ExternalEditor.SublimeText:
-      return ['com.sublimetext.3']
+      return ['com.sublimetext.4', 'com.sublimetext.3', 'com.sublimetext.2']
     case ExternalEditor.BBEdit:
       return ['com.barebones.bbedit']
     case ExternalEditor.PhpStorm:
@@ -151,6 +84,8 @@ function getBundleIdentifiers(editor: ExternalEditor): ReadonlyArray<string> {
       return ['com.google.android.studio']
     case ExternalEditor.Rider:
       return ['com.jetbrains.rider']
+    case ExternalEditor.Nova:
+      return ['com.panic.Nova']
     default:
       return assertNever(editor, `Unknown external editor: ${editor}`)
   }
@@ -216,6 +151,8 @@ function getExecutableShim(
       return Path.join(installPath, 'Contents', 'MacOS', 'studio')
     case ExternalEditor.Rider:
       return Path.join(installPath, 'Contents', 'MacOS', 'rider')
+    case ExternalEditor.Nova:
+      return Path.join(installPath, 'Contents', 'SharedSupport', 'nova')
     default:
       return assertNever(editor, `Unknown external editor: ${editor}`)
   }
@@ -272,6 +209,7 @@ export async function getAvailableEditors(): Promise<
     golandPath,
     androidStudioPath,
     riderPath,
+    novaPath,
   ] = await Promise.all([
     findApplication(ExternalEditor.Atom),
     findApplication(ExternalEditor.MacVim),
@@ -294,6 +232,7 @@ export async function getAvailableEditors(): Promise<
     findApplication(ExternalEditor.GoLand),
     findApplication(ExternalEditor.AndroidStudio),
     findApplication(ExternalEditor.Rider),
+    findApplication(ExternalEditor.Nova),
   ])
 
   if (atomPath) {
@@ -384,6 +323,10 @@ export async function getAvailableEditors(): Promise<
 
   if (riderPath) {
     results.push({ editor: ExternalEditor.Rider, path: riderPath })
+  }
+
+  if (novaPath) {
+    results.push({ editor: ExternalEditor.Nova, path: novaPath })
   }
 
   return results

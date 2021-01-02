@@ -1,5 +1,5 @@
 * Copy everything from `https://github.com/desktop/desktop/tree/development/app/src/lib/editors` to `./editors`
-* Current files are at commit `0f54c7984fb926aa97724a725a3b569ab28983f3`
+* Current files are at commit `3cef97f340e0a299d218fff26a319fce9c1a85a6`
 * Find and replace `__DARWIN__` with `process.platform === 'darwin'`
 * Find and replace `__WIN32__` with `process.platform === 'win32'`
 * Find and replace `__LINUX__` with `process.platform === 'linux'`
