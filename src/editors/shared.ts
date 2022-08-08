@@ -1,22 +1,22 @@
-import * as Darwin from './darwin'
-import * as Win32 from './win32'
-import * as Linux from './linux'
+import * as Darwin from './darwin';
+import * as Win32 from './win32';
+import * as Linux from './linux';
 
-export type ExternalEditor = Darwin.ExternalEditor | Win32.ExternalEditor
+export type ExternalEditor = Darwin.ExternalEditor | Win32.ExternalEditor;
 
 /** Parse the label into the specified shell type. */
 export function parse(label: string): ExternalEditor | null {
   if (process.platform === 'darwin') {
-    return Darwin.parse(label)
+    return Darwin.parse(label);
   } else if (process.platform === 'win32') {
-    return Win32.parse(label)
+    return Win32.parse(label);
   } else if (process.platform === 'linux') {
-    return Linux.parse(label)
+    return Linux.parse(label);
   }
 
   throw new Error(
     `Platform not currently supported for resolving editors: ${process.platform}`
-  )
+  );
 }
 
 /**
@@ -26,32 +26,32 @@ export type FoundEditor = {
   /**
    * The friendly name of the editor, to be used in labels
    */
-  editor: ExternalEditor
+  editor: ExternalEditor;
   /**
    * The executable associated with the editor to launch
    */
-  path: string
+  path: string;
   /**
    * the editor requires a shell spawn to launch
    */
-  usesShell?: boolean
-}
+  usesShell?: boolean;
+};
 
 interface IErrorMetadata {
   /** The error dialog should link off to the Atom website */
-  suggestAtom?: boolean
+  suggestAtom?: boolean;
 
   /** The error dialog should direct the user to open Preferences */
-  openPreferences?: boolean
+  openPreferences?: boolean;
 }
 
 export class ExternalEditorError extends Error {
   /** The error's metadata. */
-  public readonly metadata: IErrorMetadata
+  public readonly metadata: IErrorMetadata;
 
   public constructor(message: string, metadata: IErrorMetadata = {}) {
-    super(message)
+    super(message);
 
-    this.metadata = metadata
+    this.metadata = metadata;
   }
 }

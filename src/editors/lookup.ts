@@ -1,11 +1,11 @@
-import { ExternalEditor, ExternalEditorError } from './shared'
-import { IFoundEditor } from './found-editor'
-import { getAvailableEditors as getAvailableEditorsDarwin } from './darwin'
-import { getAvailableEditors as getAvailableEditorsWindows } from './win32'
-import { getAvailableEditors as getAvailableEditorsLinux } from './linux'
-import log from '../log'
+import { ExternalEditor, ExternalEditorError } from './shared';
+import { IFoundEditor } from './found-editor';
+import { getAvailableEditors as getAvailableEditorsDarwin } from './darwin';
+import { getAvailableEditors as getAvailableEditorsWindows } from './win32';
+import { getAvailableEditors as getAvailableEditorsLinux } from './linux';
+import log from '../log';
 
-let editorCache: ReadonlyArray<IFoundEditor<ExternalEditor>> | null = null
+let editorCache: ReadonlyArray<IFoundEditor<ExternalEditor>> | null = null;
 
 /**
  * Resolve a list of installed editors on the user's machine, using the known
@@ -15,29 +15,29 @@ export async function getAvailableEditors(): Promise<
   ReadonlyArray<IFoundEditor<ExternalEditor>>
 > {
   if (editorCache && editorCache.length > 0) {
-    return editorCache
+    return editorCache;
   }
 
   if (process.platform === 'darwin') {
-    editorCache = await getAvailableEditorsDarwin()
-    return editorCache
+    editorCache = await getAvailableEditorsDarwin();
+    return editorCache;
   }
 
   if (process.platform === 'win32') {
-    editorCache = await getAvailableEditorsWindows()
-    return editorCache
+    editorCache = await getAvailableEditorsWindows();
+    return editorCache;
   }
 
   if (process.platform === 'linux') {
-    editorCache = await getAvailableEditorsLinux()
-    return editorCache
+    editorCache = await getAvailableEditorsLinux();
+    return editorCache;
   }
 
   log.warn(
     `Platform not currently supported for resolving editors: ${process.platform}`
-  )
+  );
 
-  return []
+  return [];
 }
 
 /**
@@ -50,22 +50,23 @@ export async function getAvailableEditors(): Promise<
 export async function findEditorOrDefault(
   name: string | null
 ): Promise<IFoundEditor<ExternalEditor> | null> {
-  const editors = await getAvailableEditors()
+  const editors = await getAvailableEditors();
   if (editors.length === 0) {
-    return null
+    return null;
   }
 
   if (name) {
-    const match = editors.find(p => p.editor === name) || null
+    const match = editors.find((p) => p.editor === name) || null;
     if (!match) {
-      const menuItemName = process.platform === 'darwin' ? 'Preferences' : 'Options'
-      const message = `The editor '${name}' could not be found. Please open ${menuItemName} and choose an available editor.`
+      const menuItemName =
+        process.platform === 'darwin' ? 'Preferences' : 'Options';
+      const message = `The editor '${name}' could not be found. Please open ${menuItemName} and choose an available editor.`;
 
-      throw new ExternalEditorError(message, { openPreferences: true })
+      throw new ExternalEditorError(message, { openPreferences: true });
     }
 
-    return match
+    return match;
   }
 
-  return editors[0]
+  return editors[0];
 }

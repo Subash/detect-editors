@@ -1,3 +1,3 @@
-export * from './lookup'
-export * from './launch'
-export { ExternalEditor, parse } from './shared'
+export * from './lookup';
+export * from './launch';
+export { ExternalEditor, parse } from './shared';

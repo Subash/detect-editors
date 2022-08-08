@@ -1,6 +1,6 @@
-import { spawn } from 'child_process'
-import { pathExists } from 'fs-extra'
-import { ExternalEditorError, FoundEditor } from './shared'
+import { spawn } from 'child_process';
+import { pathExists } from 'fs-extra';
+import { ExternalEditorError, FoundEditor } from './shared';
 
 /**
  * Open a given file or folder in the desired external editor.
@@ -12,18 +12,18 @@ export async function launchExternalEditor(
   fullPath: string,
   editor: FoundEditor
 ): Promise<void> {
-  const editorPath = editor.path
-  const exists = await pathExists(editorPath)
+  const editorPath = editor.path;
+  const exists = await pathExists(editorPath);
   if (!exists) {
-    const label = process.platform === 'darwin' ? 'Preferences' : 'Options'
+    const label = process.platform === 'darwin' ? 'Preferences' : 'Options';
     throw new ExternalEditorError(
       `Could not find executable for '${editor.editor}' at path '${editor.path}'.  Please open ${label} and select an available editor.`,
       { openPreferences: true }
-    )
+    );
   }
   if (editor.usesShell) {
-    spawn(`"${editorPath}"`, [`"${fullPath}"`], { shell: true })
+    spawn(`"${editorPath}"`, [`"${fullPath}"`], { shell: true });
   } else {
-    spawn(editorPath, [fullPath])
+    spawn(editorPath, [fullPath]);
   }
 }
