@@ -1,4 +1,5 @@
 ### Detect Code Editors
+
 Extracted manually from https://github.com/desktop/desktop/tree/development/app/src/lib/editors
 
 ```javascript
