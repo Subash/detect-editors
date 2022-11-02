@@ -57,6 +57,18 @@ const editors: ILinuxExternalEditor[] = [
     // https://github.com/elementary/code
     name: 'Code',
     paths: ['/usr/bin/io.elementary.code']
+  },
+  {
+    name: 'Lite XL',
+    paths: ['/usr/bin/lite-xl']
+  },
+  {
+    name: 'Jetbrains PhpStorm',
+    paths: ['/snap/bin/phpstorm']
+  },
+  {
+    name: 'Jetbrains WebStorm',
+    paths: ['/snap/bin/webstorm']
   }
 ];
 
