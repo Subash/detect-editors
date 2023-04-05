@@ -1,18 +1,14 @@
-//Disable logging
-
-const log = {
-  error: function (...args: any[]) {
-    // console.error(...args);
+export default {
+  error: function (...args: unknown[]): void {
+    // console.error(...args)
   },
-  warn: function (...args: any[]) {
+  warn: function (...args: unknown[]): void {
     // console.warn(...args);
   },
-  info: function (...args: any[]) {
+  info: function (...args: unknown[]): void {
     // console.info(...args);
   },
-  debug: function (...args: any[]) {
+  debug: function (...args: unknown[]): void {
     // console.log(...args);
   }
 };
-
-export default log;

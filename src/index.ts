@@ -1,8 +1,15 @@
-import { getAvailableEditors, launchExternalEditor } from './editors/index';
+import * as editors from './editors/index';
 import { FoundEditor } from './editors/shared';
 
-async function launchEditor(editor: FoundEditor, fullPath: string) {
-  return await launchExternalEditor(fullPath, editor);
+export type Editor = FoundEditor;
+
+export async function launchEditor(
+  editor: Editor,
+  path: string
+): Promise<void> {
+  await editors.launchExternalEditor(path, editor);
 }
 
-export { getAvailableEditors, launchEditor };
+export async function getAvailableEditors(): Promise<readonly Editor[]> {
+  return await editors.getAvailableEditors();
+}
