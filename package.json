@@ -5,10 +5,11 @@
   "main": "lib/index.js",
   "types": "lib/index.d.ts",
   "scripts": {
-    "test": "jest",
     "clean": "rm -r lib",
     "compile": "tsc",
-    "prepack": "npm run clean && npm run compile"
+    "fetch-editors": "node scripts/fetch-editors.mjs",
+    "prepack": "npm run clean && npm run compile",
+    "test": "jest"
   },
   "repository": {
     "type": "git",
@@ -30,6 +31,7 @@
   },
   "devDependencies": {
     "jest": "^29.5.0",
+    "jszip": "^3.10.1",
     "typescript": "^5.0.3"
   }
 }
