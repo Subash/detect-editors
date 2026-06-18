@@ -17,30 +17,22 @@ let editorCache: ReadonlyArray<IFoundEditor<string>> | null = null
 export async function getAvailableEditors(): Promise<
   ReadonlyArray<IFoundEditor<string>>
 > {
-  if (editorCache && editorCache.length > 0) {
-    return editorCache
+  if (!editorCache || editorCache.length === 0) {
+    if (process.platform === 'darwin') {
+      editorCache = await getAvailableEditorsDarwin()
+    } else if (process.platform === 'win32') {
+      editorCache = await getAvailableEditorsWindows()
+    } else if (process.platform === 'linux') {
+      editorCache = await getAvailableEditorsLinux()
+    } else {
+      log.warn(
+        `Platform not currently supported for resolving editors: ${process.platform}`
+      )
+      return []
+    }
   }
 
-  if (process.platform === 'darwin') {
-    editorCache = await getAvailableEditorsDarwin()
-    return editorCache
-  }
-
-  if (process.platform === 'win32') {
-    editorCache = await getAvailableEditorsWindows()
-    return editorCache
-  }
-
-  if (process.platform === 'linux') {
-    editorCache = await getAvailableEditorsLinux()
-    return editorCache
-  }
-
-  log.warn(
-    `Platform not currently supported for resolving editors: ${process.platform}`
-  )
-
-  return []
+  return editorCache.toSorted((a, b) => a.editor.localeCompare(b.editor))
 }
 
 /**
