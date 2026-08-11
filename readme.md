@@ -11,4 +11,7 @@ const file = path.resolve('readme.md');
 await launchEditor(editors[0], file);
 ```
 
+`src/editors` is a port of the upstream code at the commit recorded in
+`src/editors/upstream.json`. See [UPDATING.md](UPDATING.md) to re-sync it.
+
 License -> https://github.com/desktop/desktop/blob/development/LICENSE
