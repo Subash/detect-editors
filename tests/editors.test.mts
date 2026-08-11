@@ -1,5 +1,10 @@
 import assert from 'node:assert/strict'
-import { cwd } from 'node:process'
+import { spawn } from 'node:child_process'
+import { once } from 'node:events'
+import { mkdtemp, writeFile } from 'node:fs/promises'
+import { tmpdir } from 'node:os'
+import { join, resolve } from 'node:path'
+import { cwd, execPath, platform } from 'node:process'
 import test from 'node:test'
 import { getAvailableEditors, launchEditor } from '../lib/index.js'
 import type { Editor } from '../lib/index.js'
@@ -36,4 +41,37 @@ test('launchEditor rejects when the executable is gone', async () => {
   await assert.rejects(() => launchEditor(editor, cwd()), {
     message: /Could not find executable/,
   })
+})
+
+test('launchEditor does not wait for the editor', async () => {
+  // an "editor" that ignores its arguments and outlives the launch by a while
+  const dir = await mkdtemp(join(tmpdir(), 'detect-editors-'))
+  const path = join(dir, platform === 'win32' ? 'editor.cmd' : 'editor')
+  await writeFile(
+    path,
+    platform === 'win32' ? '@timeout /t 30\n' : '#!/bin/sh\nsleep 30\n',
+    { mode: 0o755 }
+  )
+
+  // launch it from a child process and see whether that process is free to
+  // exit, rather than being held open until the editor is done
+  const child = spawn(
+    execPath,
+    [
+      '-e',
+      `require(${JSON.stringify(resolve('lib/index.js'))})` +
+        `.launchEditor(${JSON.stringify({
+          editor: 'Test',
+          path,
+        })}, ${JSON.stringify(dir)})`,
+    ],
+    { stdio: 'inherit' }
+  )
+
+  const start = Date.now()
+  const [code] = await once(child, 'exit')
+  const elapsed = Date.now() - start
+
+  assert.equal(code, 0)
+  assert.ok(elapsed < 5000, `expected a prompt exit, took ${elapsed}ms`)
 })
