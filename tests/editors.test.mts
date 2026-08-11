@@ -44,14 +44,16 @@ test('launchEditor rejects when the executable is gone', async () => {
 })
 
 test('launchEditor does not wait for the editor', async () => {
+  // a stand-in editor has to be a script, and node refuses to spawn a .cmd
+  // without a shell, so there is nothing to stand in with on windows
+  if (platform === 'win32') {
+    return
+  }
+
   // an "editor" that ignores its arguments and outlives the launch by a while
   const dir = await mkdtemp(join(tmpdir(), 'detect-editors-'))
-  const path = join(dir, platform === 'win32' ? 'editor.cmd' : 'editor')
-  await writeFile(
-    path,
-    platform === 'win32' ? '@timeout /t 30\n' : '#!/bin/sh\nsleep 30\n',
-    { mode: 0o755 }
-  )
+  const path = join(dir, 'editor')
+  await writeFile(path, '#!/bin/sh\nsleep 30\n', { mode: 0o755 })
 
   // launch it from a child process and see whether that process is free to
   // exit, rather than being held open until the editor is done
