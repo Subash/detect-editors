@@ -17,8 +17,8 @@ Last synced commit: `src/editors/upstream.json`.
 
 ```ts
 export type Editor // { editor: string; path: string }
-export function getAvailableEditors(): Promise<ReadonlyArray<Editor>> // sorted by name, cached
-export function launchEditor(editor: Editor, path: string): Promise<void>
+export function getAvailableEditors(): Promise<ReadonlyArray<Editor>> // sorted by name, cached, rejects on an unsupported platform
+export function launchEditor(editor: Editor, path: string): Promise<void> // rejects if the executable is gone
 ```
 
 Adding a field to a returned editor is a minor bump; removing one or changing a
@@ -82,8 +82,8 @@ them, and check any new dependency is actually published.
 
 Not upstream's, and must survive a sync:
 
-- `getAvailableEditors` sorts by name and returns `[]` — rather than throwing — on
-  a platform with no support.
+- `getAvailableEditors` sorts by name, and throws on an unsupported platform where
+  upstream logs a warning and returns `[]`.
 - `launchEditor` takes `(editor, path)`; upstream's launcher takes them the other
   way round.
 

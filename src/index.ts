@@ -33,7 +33,9 @@ export async function getAvailableEditors(): Promise<ReadonlyArray<Editor>> {
     } else if (process.platform === 'linux') {
       editorCache = await getAvailableEditorsLinux()
     } else {
-      return []
+      throw new Error(
+        `Platform not currently supported for resolving editors: ${process.platform}`
+      )
     }
   }
 
